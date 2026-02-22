@@ -1,8 +1,8 @@
 using System.Reflection;
 using System.Text.Json;
 using DocMigrator.Json;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 
 namespace Tests.Json;
 
@@ -38,7 +38,7 @@ public class RemovePropertyMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.SchemaVersion.Should().Be(1);
-        deserialized.Bar.Should().Be("original-value");
+        deserialized.SchemaVersion.ShouldBe(1);
+        deserialized.Bar.ShouldBe("original-value");
     }
 }

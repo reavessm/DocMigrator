@@ -1,7 +1,7 @@
 using System.Reflection;
 using DocMigrator.Yaml;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 
 namespace Tests.Yaml;
 
@@ -31,8 +31,8 @@ public class SingleMigrationTests
       Assert.Fail("Failed to deserialize");
     }
 
-    deserialized.SchemaVersion.Should().Be(2);
-    deserialized.Foo.Should().Be("foo-1");
+    deserialized.SchemaVersion.ShouldBe(2);
+    deserialized.Foo.ShouldBe("foo-1");
   }
 
     [Fact]
@@ -55,7 +55,7 @@ public class SingleMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.SchemaVersion.Should().Be(2);
+        deserialized.SchemaVersion.ShouldBe(2);
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class SingleMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.Foo.Should().Be("foo-1");
+        deserialized.Foo.ShouldBe("foo-1");
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class SingleMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.Foo.Should().Be("original-value");
+        deserialized.Foo.ShouldBe("original-value");
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public class SingleMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.RunsOn.Should().Equal(new List<string>{"host1"});
+        deserialized.RunsOn.ShouldBeEquivalentTo(new List<string>{"host1"});
     }
 
     [Fact]
@@ -150,6 +150,6 @@ public class SingleMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.RunsOn.Should().Equal(new List<string>{"host1"});
+        deserialized.RunsOn.ShouldBeEquivalentTo(new List<string>{"host1"});
     }
 }

@@ -1,8 +1,8 @@
 using System.Reflection;
 using System.Text.Json;
 using DocMigrator.Json;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 
 namespace Tests.Json;
 
@@ -32,8 +32,8 @@ public class SingleMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.SchemaVersion.Should().Be(1);
-        deserialized.Foo.Should().Be("foo-1");
+        deserialized.SchemaVersion.ShouldBe(1);
+        deserialized.Foo.ShouldBe("foo-1");
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class SingleMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.SchemaVersion.Should().Be(1);
+        deserialized.SchemaVersion.ShouldBe(1);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class SingleMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.Foo.Should().Be("foo-1");
+        deserialized.Foo.ShouldBe("foo-1");
     }
 
     [Fact]
@@ -105,6 +105,6 @@ public class SingleMigrationTests
             Assert.Fail("Failed to deserialize");
         }
 
-        deserialized.Foo.Should().Be("original-value");
+        deserialized.Foo.ShouldBe("original-value");
     }
 }
