@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocMigrator.Json", "DocMigrator.Json\DocMigrator.Json.csproj", "{E10CB272-7534-4B5C-86AE-F7E13F6E2308}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocMigrator.Yaml", "DocMigrator.Yaml\DocMigrator.Yaml.csproj", "{E10CB272-7534-4B5C-86AE-F7E13F6E2308}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{06AD7118-7D38-4C2F-B269-54C613F60DEF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocMigrator.Bson", "DocMigrator.Bson\DocMigrator.Bson.csproj", "{4B9D9254-5A09-40A2-9D96-E2A56DDEDD3E}"

@@ -16,6 +16,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\DocMigrator.Bson\DocMigrator.Bson.csproj" />
 		<ProjectReference Include="..\DocMigrator.Json\DocMigrator.Json.csproj" />
+		<ProjectReference Include="..\DocMigrator.Yaml\DocMigrator.Yaml.csproj" />
 	</ItemGroup>
 
 </Project>
