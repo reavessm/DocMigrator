@@ -127,4 +127,29 @@ public class SingleMigrationTests
 
         deserialized.RunsOn.Should().Equal(new List<string>{"host1"});
     }
+
+    [Fact]
+    public async Task MigrationDeserializer_Ignores_Extra_Fields()
+    {
+        // Given
+        var migrationDeserializer = Setup();
+
+        var original = @"
+            schemaVersion: 1
+            foo: original-value
+            runsOn: host1
+            doesNotExist: blah
+            ";
+
+        // When
+        var deserialized = await migrationDeserializer.Deserialize<SingleMigrationClass>(original);
+
+        // Then
+        if (deserialized == null)
+        {
+            Assert.Fail("Failed to deserialize");
+        }
+
+        deserialized.RunsOn.Should().Equal(new List<string>{"host1"});
+    }
 }

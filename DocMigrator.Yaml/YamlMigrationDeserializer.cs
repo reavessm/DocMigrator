@@ -46,6 +46,7 @@ public abstract class YamlMigrationDeserializer<T> where T : class
     {
         var deserializer = new DeserializerBuilder()
           .WithNamingConvention(CamelCaseNamingConvention.Instance)
+          .IgnoreUnmatchedProperties()
           .Build();
 
         var obj = deserializer.Deserialize<Dictionary<object, object>>(yaml);
@@ -135,6 +136,7 @@ public abstract class YamlMigrationDeserializer<T> where T : class
 
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .IgnoreUnmatchedProperties()
             .Build();
 
         var yaml = serializer.Serialize(migratedObject);
