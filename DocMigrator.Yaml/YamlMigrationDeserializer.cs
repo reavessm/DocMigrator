@@ -45,7 +45,7 @@ public abstract class YamlMigrationDeserializer<T> where T : class
     public async ValueTask<T?> Deserialize(string yaml)
     {
         var deserializer = new DeserializerBuilder()
-          .WithNamingConvention(UnderscoredNamingConvention.Instance)
+          .WithNamingConvention(CamelCaseNamingConvention.Instance)
           .Build();
 
         var obj = deserializer.Deserialize<Dictionary<object, object>>(yaml);
@@ -59,7 +59,7 @@ public abstract class YamlMigrationDeserializer<T> where T : class
         {
             // Schema version defaults to 0
             var docSchemaVersion = 0;
-            if (obj != null && obj.TryGetValue("schema_version", out var schema_version))
+            if (obj != null && obj.TryGetValue("schemaVersion", out var schema_version))
             {
               Type t = schema_version.GetType();
               switch (schema_version)
@@ -102,7 +102,7 @@ public abstract class YamlMigrationDeserializer<T> where T : class
             }
 
             // Update schema version
-            obj!["schema_version"] = AppSchemaVersion;
+            obj!["schemaVersion"] = AppSchemaVersion;
 
             return ConvertTo(obj!);
         }
@@ -130,11 +130,11 @@ public abstract class YamlMigrationDeserializer<T> where T : class
             throw new ArgumentNullException(nameof(migratedObject));
 
         var serializer = new SerializerBuilder()
-            .WithNamingConvention(UnderscoredNamingConvention.Instance)
+            .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .Build();
 
         var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(UnderscoredNamingConvention.Instance)
+            .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .Build();
 
         var yaml = serializer.Serialize(migratedObject);

@@ -26,14 +26,15 @@ public class SingleMigrationClassDeserializer : YamlMigrationDeserializer<Single
 
   public static ValueTask ApplyMigration_2(IServiceProvider serviceProvider, Dictionary<object,object> obj)
   {
-    if (obj.ContainsKey("runs_on"))
+    const string key = "runsOn";
+    if (obj.ContainsKey(key))
     {
-      var runsOn = obj["runs_on"];
+      var runsOn = obj[key];
       Type t = runsOn.GetType();
       switch (runsOn)
       {
         case string r:
-          obj["runs_on"] = new List<string>{r};
+          obj[key] = new List<string>{r};
           break;
         case List<string> r:
           // Nothing to do
@@ -41,7 +42,6 @@ public class SingleMigrationClassDeserializer : YamlMigrationDeserializer<Single
         default:
           throw new InvalidCastException($"Cannot convert from {t} to List<string>");
       }
-      runsOn = obj["runs_on"];
     }
     return ValueTask.CompletedTask;
   }

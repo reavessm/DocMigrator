@@ -42,7 +42,7 @@ public class SingleMigrationTests
         var migrationDeserializer = Setup();
 
         var original = @"
-            schema_version: 0
+            schemaVersion: 0
             foo: original-value
             ";
 
@@ -65,7 +65,7 @@ public class SingleMigrationTests
         var migrationDeserializer = Setup();
 
         var original = @"
-            schema_version: 0
+            schemaVersion: 0
             foo: original-value
             ";
 
@@ -88,7 +88,7 @@ public class SingleMigrationTests
         var migrationDeserializer = Setup();
 
         var original = @"
-            schema_version: 1
+            schemaVersion: 1
             foo: original-value
             ";
 
@@ -111,9 +111,9 @@ public class SingleMigrationTests
         var migrationDeserializer = Setup();
 
         var original = @"
-            schema_version: 1
+            schemaVersion: 1
             foo: original-value
-            runs_on: host1
+            runsOn: host1
             ";
 
         // When
