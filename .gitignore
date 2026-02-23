@@ -396,3 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+DocMigrator.Json/.DS_Store
+DocMigrator.Bson/.DS_Store
+DocMigrator.Yaml/.DS_Store
+.DS_Store

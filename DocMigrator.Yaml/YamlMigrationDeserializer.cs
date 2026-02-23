@@ -1,4 +1,3 @@
-using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using Microsoft.Extensions.Logging;
@@ -12,6 +11,8 @@ namespace DocMigrator.Yaml;
 public abstract class YamlMigrationDeserializer<T> where T : class
 {
     private readonly ILogger<YamlMigrationDeserializer<T>> _logger;
+    private readonly DeserializerBuilder _deserializerBuilder;
+    private readonly SerializerBuilder _serializerBuilder;
     private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
@@ -20,16 +21,22 @@ public abstract class YamlMigrationDeserializer<T> where T : class
     /// <param name="serviceProvider">The service provider.</param>
     /// <param name="logger">The logger.</param>
     /// <param name="migrations">The list of migration functions.</param>
-    /// <param name="options">The optional list of functions specifying deserializer options</param>
+    /// <param name="deserializerBuilder"></param>
+    /// <param name="serializerBuilder"></param>
     protected YamlMigrationDeserializer(IServiceProvider serviceProvider,
             ILogger<YamlMigrationDeserializer<T>> logger,
             IReadOnlyList<Func<IServiceProvider, Dictionary<object, object>, ValueTask>> migrations,
-            List<Func<DeserializerBuilder, DeserializerBuilder>>? options = null)
+            DeserializerBuilder? deserializerBuilder = null, 
+            SerializerBuilder? serializerBuilder = null)
     {
       _serviceProvider = serviceProvider;
       _logger = logger;
+      _deserializerBuilder = deserializerBuilder ?? new DeserializerBuilder()
+          .WithNamingConvention(CamelCaseNamingConvention.Instance)
+          .IgnoreUnmatchedProperties();
+      _serializerBuilder = serializerBuilder ?? new SerializerBuilder()
+          .WithNamingConvention(CamelCaseNamingConvention.Instance);
       Migrations = migrations;
-      Options = options ?? DefaultOptions;
     }
 
     /// <summary>
@@ -43,34 +50,13 @@ public abstract class YamlMigrationDeserializer<T> where T : class
     public int AppSchemaVersion => Migrations.Count;
 
     /// <summary>
-    ///     List of functions specifying deserializer options
-    /// </summary>
-    public List<Func<DeserializerBuilder, DeserializerBuilder>> Options { get; }
-
-    /// <summary>
-    ///     List of default functions specifying deserializer options
-    /// </summary>
-    public static readonly List<Func<DeserializerBuilder, DeserializerBuilder>> DefaultOptions = new List<Func<DeserializerBuilder, DeserializerBuilder>>
-    {
-        b => b.WithNamingConvention(CamelCaseNamingConvention.Instance),
-        b => b.IgnoreUnmatchedProperties()
-    };
-
-    /// <summary>
     ///     Deserializes the specified Yaml string and applies migrations.
     /// </summary>
     /// <param name="yaml">The Yaml string to deserialize.</param>
     /// <returns>A <see cref="ValueTask{T}" /> representing the asynchronous operation.</returns>
     public async ValueTask<T?> Deserialize(string yaml)
     {
-        var builder = new DeserializerBuilder();
-
-        foreach (var step in Options)
-        {
-            builder = step(builder);
-        }
-
-        var deserializer = builder.Build();
+        var deserializer = _deserializerBuilder.Build();
 
         var obj = deserializer.Deserialize<Dictionary<object, object>>(yaml);
 
@@ -148,19 +134,13 @@ public abstract class YamlMigrationDeserializer<T> where T : class
     /// <exception cref="YamlDotNet.Core.YamlException">
     ///   Thrown when the object cannot be deserialized into <typeparamref name="T"/>.
     /// </exception>
-    public static T ConvertTo(Dictionary<object, object> migratedObject)
+    public T ConvertTo(Dictionary<object, object> migratedObject)
     {
         if (migratedObject is null)
             throw new ArgumentNullException(nameof(migratedObject));
-
-        var serializer = new SerializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .Build();
-
-        var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .IgnoreUnmatchedProperties()
-            .Build();
+        
+        var serializer = _serializerBuilder.Build();
+        var deserializer = _deserializerBuilder.Build();
 
         var yaml = serializer.Serialize(migratedObject);
 
