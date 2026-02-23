@@ -20,11 +20,16 @@ public abstract class YamlMigrationDeserializer<T> where T : class
     /// <param name="serviceProvider">The service provider.</param>
     /// <param name="logger">The logger.</param>
     /// <param name="migrations">The list of migration functions.</param>
-    protected YamlMigrationDeserializer(IServiceProvider serviceProvider, ILogger<YamlMigrationDeserializer<T>> logger, IReadOnlyList<Func<IServiceProvider, Dictionary<object, object>, ValueTask>> migrations)
+    /// <param name="options">The optional list of functions specifying deserializer options</param>
+    protected YamlMigrationDeserializer(IServiceProvider serviceProvider,
+            ILogger<YamlMigrationDeserializer<T>> logger,
+            IReadOnlyList<Func<IServiceProvider, Dictionary<object, object>, ValueTask>> migrations,
+            List<Func<DeserializerBuilder, DeserializerBuilder>>? options = null)
     {
       _serviceProvider = serviceProvider;
       _logger = logger;
       Migrations = migrations;
+      Options = options ?? DefaultOptions;
     }
 
     /// <summary>
@@ -38,16 +43,34 @@ public abstract class YamlMigrationDeserializer<T> where T : class
     public int AppSchemaVersion => Migrations.Count;
 
     /// <summary>
+    ///     List of functions specifying deserializer options
+    /// </summary>
+    public List<Func<DeserializerBuilder, DeserializerBuilder>> Options { get; }
+
+    /// <summary>
+    ///     List of default functions specifying deserializer options
+    /// </summary>
+    public static readonly List<Func<DeserializerBuilder, DeserializerBuilder>> DefaultOptions = new List<Func<DeserializerBuilder, DeserializerBuilder>>
+    {
+        b => b.WithNamingConvention(CamelCaseNamingConvention.Instance),
+        b => b.IgnoreUnmatchedProperties()
+    };
+
+    /// <summary>
     ///     Deserializes the specified Yaml string and applies migrations.
     /// </summary>
     /// <param name="yaml">The Yaml string to deserialize.</param>
     /// <returns>A <see cref="ValueTask{T}" /> representing the asynchronous operation.</returns>
     public async ValueTask<T?> Deserialize(string yaml)
     {
-        var deserializer = new DeserializerBuilder()
-          .WithNamingConvention(CamelCaseNamingConvention.Instance)
-          .IgnoreUnmatchedProperties()
-          .Build();
+        var builder = new DeserializerBuilder();
+
+        foreach (var step in Options)
+        {
+            builder = step(builder);
+        }
+
+        var deserializer = builder.Build();
 
         var obj = deserializer.Deserialize<Dictionary<object, object>>(yaml);
 
